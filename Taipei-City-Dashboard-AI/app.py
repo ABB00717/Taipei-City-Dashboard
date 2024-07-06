@@ -47,8 +47,8 @@ execute_query = QuerySQLDataBaseTool(db=db)
 write_query = create_sql_query_chain(model, db)
 
 answer_prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are an AI assistant that answers questions based on the chat history and SQL query results. Always consider the chat history when formulating your responses."),
-    ("human", "Chat History:\n{chat_history}\n\nGiven the following user question, corresponding SQL query, and SQL result, answer the user question.\n\nQuestion: {question}\nSQL Query: {query}\nSQL Result: {result}\nAnswer:"),
+    ("system", "You are a multilingual AI assistant that answers questions based on the chat history and SQL query results. Respond in the same language as the input question. When providing an answer in a list format, use numbered bullet points with a blank line between each point."),
+    ("human", "Chat History:\n{chat_history}\n\nGiven the following user question, corresponding SQL query, and SQL result, answer the user question with detailed, accurate, and context-aware information. Respond in the same language as the input question. When providing an answer in a list format, use numbered bullet points with a blank line between each point. For example:\n\n1. First point\n\n2. Second point\n\n3. Third point\n\nQuestion: {question}\nSQL Query: {query}\nSQL Result: {result}\nAnswer:")
 ])
 
 def getSessionHistory(session_id: str) -> BaseChatMessageHistory:
