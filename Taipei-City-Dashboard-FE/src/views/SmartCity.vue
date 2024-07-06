@@ -63,6 +63,7 @@ export default {
 			} catch (error) {
 				console.error('Error:', error)
 				chatHistory.value.push({ role: 'assistant', content: '抱歉，發生錯誤。請稍後再試。' })
+				scrollToBottom()
 			} finally {
 				isLoading.value = false
 				prompt.value = ''
@@ -103,7 +104,7 @@ h1 {
 }
 
 .messages {
-	height: 10rem;
+	min-height: 50vh;
 	padding: 10px;
 	border: 1px solid #e1e4e8;
 	border-radius: 4px;
@@ -150,8 +151,8 @@ h1 {
 textarea {
 	field-sizing: content;
 	width: 100%;
-	min-height: 50px;
-	max-height: 150px;
+	min-height: 5vh;
+	max-height: 15vh;
 	border-radius: 4px;
 	margin-bottom: 10px;
 	resize: none
