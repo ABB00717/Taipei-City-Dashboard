@@ -6,6 +6,7 @@
 				:class="['message', message.role]">
 				{{ message.content }}
 			</div>
+			<img class="spinningCat" v-if="isLoading" src="./loading_cat.gif">
 		</div>
 		<div class="input-area">
 			<textarea v-model="prompt" :disabled="isLoading" placeholder="在這裡輸入你的問題..."
@@ -208,5 +209,11 @@ button:active {
 button:disabled {
 	background-color: #6c757d;
 	cursor: not-allowed;
+}
+
+.spinningCat {
+	margin-left: 22px;
+	width: 100px;
+	height: 100px;
 }
 </style>
