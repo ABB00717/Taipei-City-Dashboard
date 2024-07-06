@@ -106,7 +106,7 @@ h1 {
 }
 
 .messages {
-	min-height: 50vh;
+	height: 50vh;
 	padding: 10px;
 	border: 1px solid #e1e4e8;
 	border-radius: 4px;
