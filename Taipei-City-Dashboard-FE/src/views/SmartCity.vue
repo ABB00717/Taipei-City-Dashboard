@@ -12,7 +12,8 @@
 			<textarea v-model="prompt" :disabled="isLoading" placeholder="在這裡輸入你的問題..."
 				@keydown.enter.shift.exact="handleShiftEnter" @keydown.enter.exact="generateResponse"></textarea>
 			<button @click="generateResponse" :disabled="isLoading">
-				{{ isLoading ? '生成中...' : '發送' }}
+				<i v-if="isLoading" class="fa-solid fa-plane-arrival"></i>
+				<i v-else class="fa-solid fa-plane-departure"></i>
 			</button>
 		</div>
 	</div>
@@ -101,7 +102,7 @@ export default {
 	margin: 20px auto;
 	background: var(--chat-bg-light);
 	border-radius: 8px;
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.1);
 	padding: 20px;
 	box-shadow: #333;
 }
@@ -115,8 +116,8 @@ h1 {
 .messages {
 	height: 50vh;
 	padding: 10px;
-	border: 1px solid #e1e4e8;
-	border-radius: 4px;
+	border: 2px solid #e1e4e8;
+	border-radius: 8px;
 	margin-bottom: 20px;
 	overflow: hidden;
 	overflow-y: scroll;
@@ -175,6 +176,7 @@ h1 {
 .input-area {
 	display: flex;
 	flex-direction: column;
+	overflow: visible;
 }
 
 textarea {
@@ -188,6 +190,16 @@ textarea {
 	animation-name: slidein;
 	animation-duration: 1s;
 	animation-delay: 0.3s;
+	outline: 1px solid #e1e4e8;
+	border-radius: 8px;
+}
+
+textarea:focus {
+	outline: none;
+	border: 1px solid #007bff;
+	box-shadow: 0px 0px 5px #007bff;
+	-moz-box-shadow: 0px 0px 5px #007bff;
+	-webkit-box-shadow: 0px 0px 5px #007bff;
 }
 
 button {
@@ -203,6 +215,7 @@ button {
 
 button:hover {
 	background-color: #218838;
+	animation: glowing 3000ms infinite;
 }
 
 button:active {
@@ -214,11 +227,29 @@ button:active {
 button:disabled {
 	background-color: #6c757d;
 	cursor: not-allowed;
+	animation: none !important;
 }
 
 .spinningCat {
 	margin-left: 22px;
 	width: 100px;
 	height: 100px;
+}
+
+@keyframes glowing {
+	0% {
+		background-color: #2ba805;
+		box-shadow: 0 0 5px #2ba805;
+	}
+
+	50% {
+		background-color: #49e819;
+		box-shadow: 0 0 20px #49e819;
+	}
+
+	100% {
+		background-color: #2ba805;
+		box-shadow: 0 0 5px #2ba805;
+	}
 }
 </style>
