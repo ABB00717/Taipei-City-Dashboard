@@ -2,15 +2,18 @@
 	<div class="chat-container">
 		<h1>智慧城市聊天室</h1>
 		<div class="messages" ref="messagesContainer">
-			<div v-for="(message, index) in chatHistory" :key="index" :class="['message', message.role]">
+			<div v-for="(message, index) in chatStore.state.chatHistory" :key="index"
+				:class="['message', message.role]">
 				{{ message.content }}
 			</div>
+			<img class="spinningCat" v-if="isLoading" src="./loading_cat.gif">
 		</div>
 		<div class="input-area">
-			<textarea v-model="prompt" :disabled="isLoading" placeholder="在這裡輸入你的問題..." @keyup.enter="generateResponse"
-				@keydown.enter.prevent="postReply"></textarea>
+			<textarea v-model="prompt" :disabled="isLoading" placeholder="在這裡輸入你的問題..."
+				@keydown.enter.shift.exact="handleShiftEnter" @keydown.enter.exact="generateResponse"></textarea>
 			<button @click="generateResponse" :disabled="isLoading">
-				{{ isLoading ? '生成中...' : '發送' }}
+				<i v-if="isLoading" class="fa-solid fa-plane-arrival"></i>
+				<i v-else class="fa-solid fa-plane-departure"></i>
 			</button>
 		</div>
 	</div>
@@ -18,14 +21,15 @@
 
 <script>
 import { ref, onMounted, nextTick } from 'vue'
+import { useChatStore } from './useChatStore'
 
 export default {
 	name: 'SmartCity',
 	setup() {
 		const prompt = ref('')
-		const chatHistory = ref([])
 		const isLoading = ref(false)
 		const messagesContainer = ref(null)
+		const chatStore = useChatStore()
 
 		const scrollToBottom = () => {
 			nextTick(() => {
@@ -39,7 +43,7 @@ export default {
 			if (!prompt.value.trim()) return
 			isLoading.value = true
 
-			chatHistory.value.push({ role: 'user', content: prompt.value })
+			chatStore.addMessage({ role: 'user', content: prompt.value })
 			scrollToBottom()
 			try {
 				const response = await fetch('http://localhost:5001/generate', {
@@ -52,23 +56,26 @@ export default {
 				})
 
 				const data = await response.json()
-				scrollToBottom()
-				isLoading.value = false;
+				isLoading.value = false
 
 				if (!response.ok) {
 					throw new Error(`API 錯誤: ${data.error || response.statusText}`)
 				}
 
-				chatHistory.value.push({ role: 'assistant', content: data.response })
+				chatStore.addMessage({ role: 'assistant', content: data.response })
 				scrollToBottom()
 			} catch (error) {
 				console.error('Error:', error)
-				chatHistory.value.push({ role: 'assistant', content: '抱歉，發生錯誤。請稍後再試。' })
+				chatStore.addMessage({ role: 'assistant', content: '抱歉，發生錯誤。請稍後再試。' })
 				scrollToBottom()
 			} finally {
 				isLoading.value = false
 				prompt.value = ''
 			}
+		}
+
+		const handleShiftEnter = (event) => {
+			return
 		}
 
 		onMounted(() => {
@@ -77,10 +84,11 @@ export default {
 
 		return {
 			prompt,
-			chatHistory,
 			isLoading,
 			generateResponse,
-			messagesContainer
+			messagesContainer,
+			chatStore,
+			handleShiftEnter
 		}
 	}
 }
@@ -94,7 +102,7 @@ export default {
 	margin: 20px auto;
 	background: var(--chat-bg-light);
 	border-radius: 8px;
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.1);
 	padding: 20px;
 	box-shadow: #333;
 }
@@ -106,10 +114,10 @@ h1 {
 }
 
 .messages {
-	min-height: 50vh;
+	height: 50vh;
 	padding: 10px;
-	border: 1px solid #e1e4e8;
-	border-radius: 4px;
+	border: 2px solid #e1e4e8;
+	border-radius: 8px;
 	margin-bottom: 20px;
 	overflow: hidden;
 	overflow-y: scroll;
@@ -138,6 +146,13 @@ h1 {
 	animation-timing-function: ease-in-out;
 }
 
+.user:active {
+	animation-name: shake;
+	animation-duration: 0.3s;
+	animation-timing-function: ease-in-out;
+
+}
+
 .assistant {
 	justify-content: flex-start;
 	background-color: white;
@@ -149,6 +164,13 @@ h1 {
 	animation-name: popup;
 	animation-duration: 0.3s;
 	animation-timing-function: ease-in-out;
+}
+
+.assistant:active {
+	animation-name: shake;
+	animation-duration: 0.3s;
+	animation-timing-function: ease-in-out;
+
 }
 
 @keyframes popup {
@@ -165,9 +187,32 @@ h1 {
 	}
 }
 
+@keyframes shake {
+	0% {
+		transform: translate(5px, 3px);
+	}
+
+	25% {
+		transform: translate(-2px, 1px);
+	}
+
+	50% {
+		transform: translate(4px, -3px);
+	}
+
+	75% {
+		transform: translate(1px, 2px);
+	}
+
+	100% {
+		transform: translate(0px, 0px);
+	}
+}
+
 .input-area {
 	display: flex;
 	flex-direction: column;
+	overflow: visible;
 }
 
 textarea {
@@ -181,6 +226,17 @@ textarea {
 	animation-name: slidein;
 	animation-duration: 1s;
 	animation-delay: 0.3s;
+	outline: 1px solid #e1e4e8;
+	border-radius: 8px;
+	transition: border 0.3s;
+}
+
+textarea:focus {
+	outline: none;
+	border: 1px solid #007bff;
+	box-shadow: 0px 0px 5px #007bff;
+	-moz-box-shadow: 0px 0px 5px #007bff;
+	-webkit-box-shadow: 0px 0px 5px #007bff;
 }
 
 button {
@@ -190,12 +246,13 @@ button {
 	padding: 10px 20px;
 	border-radius: 4px;
 	cursor: pointer;
-	transition: background-color 0.3s;
 	align-self: flex-end;
+	transition: background-color 0.3s;
 }
 
 button:hover {
 	background-color: #218838;
+	animation: glowing 3000ms infinite;
 }
 
 button:active {
@@ -207,5 +264,29 @@ button:active {
 button:disabled {
 	background-color: #6c757d;
 	cursor: not-allowed;
+	animation: none !important;
+}
+
+.spinningCat {
+	margin-left: 22px;
+	width: 100px;
+	height: 100px;
+}
+
+@keyframes glowing {
+	0% {
+		background-color: #2ba805;
+		box-shadow: 0 0 5px #2ba805;
+	}
+
+	50% {
+		background-color: #49e819;
+		box-shadow: 0 0 20px #49e819;
+	}
+
+	100% {
+		background-color: #2ba805;
+		box-shadow: 0 0 5px #2ba805;
+	}
 }
 </style>
