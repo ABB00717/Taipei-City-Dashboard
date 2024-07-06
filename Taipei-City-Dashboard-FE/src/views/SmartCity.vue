@@ -3,7 +3,7 @@
 		<h1>智慧城市聊天室</h1>
 		<div class="messages" ref="messagesContainer">
 			<div v-for="(message, index) in chatStore.state.chatHistory" :key="index"
-				:class="['message', message.role]">
+				:class="['message', message.role, message.msg]">
 				{{ message.content }}
 			</div>
 			<img class="spinningCat" v-if="isLoading" src="./loading_cat.gif">
@@ -43,7 +43,7 @@ export default {
 			if (!prompt.value.trim()) return
 			isLoading.value = true
 
-			chatStore.addMessage({ role: 'user', content: prompt.value })
+			chatStore.addMessage({ role: 'user', content: prompt.value, msg: 'normal' })
 			scrollToBottom()
 			try {
 				const response = await fetch('http://localhost:5001/generate', {
@@ -66,7 +66,7 @@ export default {
 				scrollToBottom()
 			} catch (error) {
 				console.error('Error:', error)
-				chatStore.addMessage({ role: 'assistant', content: '抱歉，發生錯誤。請稍後再試。' })
+				chatStore.addMessage({ role: 'assistant', content: '抱歉，發生錯誤。請稍後再試。', msg: 'error' })
 				scrollToBottom()
 			} finally {
 				isLoading.value = false
@@ -288,5 +288,9 @@ button:disabled {
 		background-color: #2ba805;
 		box-shadow: 0 0 5px #2ba805;
 	}
+}
+
+.error {
+	color: #FF033E;
 }
 </style>
