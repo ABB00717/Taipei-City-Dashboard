@@ -146,6 +146,13 @@ h1 {
 	animation-timing-function: ease-in-out;
 }
 
+.user:active {
+	animation-name: shake;
+	animation-duration: 0.3s;
+	animation-timing-function: ease-in-out;
+
+}
+
 .assistant {
 	justify-content: flex-start;
 	background-color: white;
@@ -159,6 +166,13 @@ h1 {
 	animation-timing-function: ease-in-out;
 }
 
+.assistant:active {
+	animation-name: shake;
+	animation-duration: 0.3s;
+	animation-timing-function: ease-in-out;
+
+}
+
 @keyframes popup {
 	0% {
 		transform: scale(0.4);
@@ -170,6 +184,28 @@ h1 {
 
 	100% {
 		transform: scale(1);
+	}
+}
+
+@keyframes shake {
+	0% {
+		transform: translate(5px, 3px);
+	}
+
+	25% {
+		transform: translate(-2px, 1px);
+	}
+
+	50% {
+		transform: translate(4px, -3px);
+	}
+
+	75% {
+		transform: translate(1px, 2px);
+	}
+
+	100% {
+		transform: translate(0px, 0px);
 	}
 }
 
@@ -192,6 +228,7 @@ textarea {
 	animation-delay: 0.3s;
 	outline: 1px solid #e1e4e8;
 	border-radius: 8px;
+	transition: border 0.3s;
 }
 
 textarea:focus {
@@ -209,8 +246,8 @@ button {
 	padding: 10px 20px;
 	border-radius: 4px;
 	cursor: pointer;
-	transition: background-color 0.3s;
 	align-self: flex-end;
+	transition: background-color 0.3s;
 }
 
 button:hover {
