@@ -2,13 +2,14 @@
 	<div class="chat-container">
 		<h1>智慧城市聊天室</h1>
 		<div class="messages" ref="messagesContainer">
-			<div v-for="(message, index) in chatHistory" :key="index" :class="['message', message.role]">
+			<div v-for="(message, index) in chatStore.state.chatHistory" :key="index"
+				:class="['message', message.role]">
 				{{ message.content }}
 			</div>
 		</div>
 		<div class="input-area">
-			<textarea v-model="prompt" :disabled="isLoading" placeholder="在這裡輸入你的問題..." @keyup.enter="generateResponse"
-				@keydown.enter.prevent="postReply"></textarea>
+			<textarea v-model="prompt" :disabled="isLoading" placeholder="在這裡輸入你的問題..."
+				@keyup.enter="generateResponse"></textarea>
 			<button @click="generateResponse" :disabled="isLoading">
 				{{ isLoading ? '生成中...' : '發送' }}
 			</button>
@@ -18,14 +19,15 @@
 
 <script>
 import { ref, onMounted, nextTick } from 'vue'
+import { useChatStore } from './useChatStore'
 
 export default {
 	name: 'SmartCity',
 	setup() {
 		const prompt = ref('')
-		const chatHistory = ref([])
 		const isLoading = ref(false)
 		const messagesContainer = ref(null)
+		const chatStore = useChatStore()
 
 		const scrollToBottom = () => {
 			nextTick(() => {
@@ -39,7 +41,7 @@ export default {
 			if (!prompt.value.trim()) return
 			isLoading.value = true
 
-			chatHistory.value.push({ role: 'user', content: prompt.value })
+			chatStore.addMessage({ role: 'user', content: prompt.value })
 			scrollToBottom()
 			try {
 				const response = await fetch('http://localhost:5001/generate', {
@@ -52,18 +54,17 @@ export default {
 				})
 
 				const data = await response.json()
-				scrollToBottom()
-				isLoading.value = false;
+				isLoading.value = false
 
 				if (!response.ok) {
 					throw new Error(`API 錯誤: ${data.error || response.statusText}`)
 				}
 
-				chatHistory.value.push({ role: 'assistant', content: data.response })
+				chatStore.addMessage({ role: 'assistant', content: data.response })
 				scrollToBottom()
 			} catch (error) {
 				console.error('Error:', error)
-				chatHistory.value.push({ role: 'assistant', content: '抱歉，發生錯誤。請稍後再試。' })
+				chatStore.addMessage({ role: 'assistant', content: '抱歉，發生錯誤。請稍後再試。' })
 				scrollToBottom()
 			} finally {
 				isLoading.value = false
@@ -77,10 +78,10 @@ export default {
 
 		return {
 			prompt,
-			chatHistory,
 			isLoading,
 			generateResponse,
-			messagesContainer
+			messagesContainer,
+			chatStore
 		}
 	}
 }
