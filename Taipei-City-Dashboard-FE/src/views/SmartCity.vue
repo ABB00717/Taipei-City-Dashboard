@@ -52,6 +52,7 @@ export default {
 				})
 
 				const data = await response.json()
+				scrollToBottom()
 				isLoading.value = false;
 
 				if (!response.ok) {
@@ -89,16 +90,17 @@ export default {
 .chat-container {
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	max-width: 800px;
+	align-content: center;
 	margin: 20px auto;
 	background: var(--chat-bg-light);
 	border-radius: 8px;
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 	padding: 20px;
+	box-shadow: #333;
 }
 
 h1 {
-	color: var(--chat-bg-light);
-	filter: invert(1);
+	color: var(--chat-text-light);
 	text-align: center;
 	margin-bottom: 20px;
 }
@@ -131,6 +133,9 @@ h1 {
 	margin-right: 1em;
 	max-width: 60%;
 	word-wrap: break-word;
+	animation-name: popup;
+	animation-duration: 0.3s;
+	animation-timing-function: ease-in-out;
 }
 
 .assistant {
@@ -141,6 +146,23 @@ h1 {
 	margin-left: 1em;
 	max-width: 60%;
 	word-wrap: break-word;
+	animation-name: popup;
+	animation-duration: 0.3s;
+	animation-timing-function: ease-in-out;
+}
+
+@keyframes popup {
+	0% {
+		transform: scale(0.4);
+	}
+
+	33% {
+		transform: scale(1.1);
+	}
+
+	100% {
+		transform: scale(1);
+	}
 }
 
 .input-area {
@@ -155,7 +177,10 @@ textarea {
 	max-height: 15vh;
 	border-radius: 4px;
 	margin-bottom: 10px;
-	resize: none
+	resize: none;
+	animation-name: slidein;
+	animation-duration: 1s;
+	animation-delay: 0.3s;
 }
 
 button {
