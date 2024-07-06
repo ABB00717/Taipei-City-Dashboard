@@ -74,7 +74,7 @@ export default {
 		}
 
 		const handleShiftEnter = (event) => {
-			prompt.value += '\n';
+			return
 		}
 
 		onMounted(() => {
