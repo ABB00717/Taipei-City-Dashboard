@@ -10,7 +10,7 @@
 		</div>
 		<div class="input-area">
 			<textarea v-model="prompt" :disabled="isLoading" placeholder="在這裡輸入你的問題..."
-				@keyup.enter="generateResponse"></textarea>
+				@keydown.enter.shift.exact="handleShiftEnter" @keydown.enter.exact="generateResponse"></textarea>
 			<button @click="generateResponse" :disabled="isLoading">
 				{{ isLoading ? '生成中...' : '發送' }}
 			</button>
@@ -73,6 +73,10 @@ export default {
 			}
 		}
 
+		const handleShiftEnter = (event) => {
+			prompt.value += '\n';
+		}
+
 		onMounted(() => {
 			scrollToBottom()
 		})
@@ -82,7 +86,8 @@ export default {
 			isLoading,
 			generateResponse,
 			messagesContainer,
-			chatStore
+			chatStore,
+			handleShiftEnter
 		}
 	}
 }
