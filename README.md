@@ -56,14 +56,9 @@ SITCON Hackathon 2024 成果發表範例
 ### 成果展示
 - 可附上其他專案介紹的投影片/文件等等<br>
 一些你可能會有的對話，可以看到就算不在資料庫內，在他能力以內依然能回答。<br>
-> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/979111e6-1bcc-4951-aae5-b7a142bca67c)<br>
-可以根據上下文回答問題。<br>
-> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/e78f010c-fbf8-45a2-bdda-63671e547657)<br>
-可以知道一些沒有在儀表板上的資訊。<br>
-> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/76d6f23b-ee79-44b4-ad5b-daa323d21569)
-但是他依然很有可能會犯錯 (PS. 台科大在大安區)。<br>
-> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/53ab898f-12d8-483b-97bc-d40bcc5e05b6)<br>
-> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/5b8d66ff-8266-45d7-af97-dfd97dbac694)
+> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/06e49af1-6bc8-4537-80ed-170cdfd480e1)<br>
+> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/2adf5894-f60b-40ea-a4d8-e5f1d8487e5e)<br>
+
 
 
 
