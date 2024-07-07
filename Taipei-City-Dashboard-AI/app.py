@@ -71,11 +71,17 @@ def setup_ai_model():
 
 # Chat history management
 memory = {}
+conversation = {}
 
 def getSessionHistory(session_id: str) -> BaseChatMessageHistory:
     if session_id not in memory:
         memory[session_id] = ChatMessageHistory()
     return memory[session_id]
+
+def getSessionConversation(session_id: str) -> BaseChatMessageHistory:
+    if session_id not in conversation:
+        conversation[session_id] = ChatMessageHistory()
+    return conversation[session_id]
 
 def format_chat_history(chat_history):
     formatted_history = []
@@ -120,10 +126,13 @@ prompt_check = ChatPromptTemplate.from_messages([
     1. If it contains valid data:
        - Incorporate the key points into your consideration.
        - Ensure all data is accurately represented.
+       - Please also consider the chat history.
        - Answer the user's question based on the SQL data.
     2. If it contains a syntax error or any error message:
-       - Disregard the SQL response entirely.
+       - Disregard the SQL response entirely and forget anything about SQL.
        - Answer the user's question directly without mentioning any error.
+       - Don't reply with any SQL grammar or syntax.
+       - Please also consider the chat history if youo can't find it from sql_response.
        - You may use any valid data provided in the response, if any.
     3. In all cases, focus on addressing the user's question to the best of your ability.
     """),
@@ -143,7 +152,7 @@ chain_with_history = RunnableWithMessageHistory(
 )
 check_with_history = RunnableWithMessageHistory(
     chain_check,
-	getSessionHistory,
+	getSessionConversation,
 	input_messages_key="question",
 	history_messages_key="history",
 )
