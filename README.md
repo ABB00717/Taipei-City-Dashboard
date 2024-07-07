@@ -3,7 +3,7 @@ title: SITCON Hackathon 2024 專案 README 模板
 tags: SITCON Hackathon 2024, SITCON,  Hackathon , 2024 ,
 GA: 
 ---
-# {42號混凝土拌義大利麵助理}
+# {智慧城市}
 
 SITCON Hackathon 2024 成果發表範例
 
@@ -54,13 +54,13 @@ SITCON Hackathon 2024 成果發表範例
 ![image](https://hackmd.io/_uploads/SkfcTPvvA.png)
 
 ### 成果展示
-- 可附上其他專案介紹的投影片/文件等等
-> 一些你可能會有的對話，可以看到就算不在資料庫內，在他能力以內依然能回答。
-> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/979111e6-1bcc-4951-aae5-b7a142bca67c)
-> 可以根據上下文回答問題。
-> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/e78f010c-fbf8-45a2-bdda-63671e547657)
-> 但是他依然很有可能會犯錯 (PS. 台科大在大安區)。
-> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/53ab898f-12d8-483b-97bc-d40bcc5e05b6)
+- 可附上其他專案介紹的投影片/文件等等<br>
+一些你可能會有的對話，可以看到就算不在資料庫內，在他能力以內依然能回答。<br>
+> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/979111e6-1bcc-4951-aae5-b7a142bca67c)<br>
+可以根據上下文回答問題。<br>
+> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/e78f010c-fbf8-45a2-bdda-63671e547657)<br>
+但是他依然很有可能會犯錯 (PS. 台科大在大安區)。<br>
+> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/53ab898f-12d8-483b-97bc-d40bcc5e05b6)<br>
 
 
 
