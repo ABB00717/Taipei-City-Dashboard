@@ -3,7 +3,7 @@
 		<h1>智慧城市聊天室</h1>
 		<div class="messages" ref="messagesContainer">
 			<div v-for="(message, index) in chatStore.state.chatHistory" :key="index"
-				:class="['message', message.role]">
+				:class="['message', message.role, message.msg]">
 				{{ message.content }}
 			</div>
 			<img class="spinningCat" v-if="isLoading" src="./loading_cat.gif">
@@ -12,7 +12,7 @@
 			<textarea v-model="prompt" :disabled="isLoading" placeholder="在這裡輸入你的問題..."
 				@keydown.enter.shift.exact="handleShiftEnter" @keydown.enter.exact="generateResponse"></textarea>
 			<button @click="generateResponse" :disabled="isLoading">
-				<i v-if="isLoading" class="fa-solid fa-spinner"></i>
+				<i v-if="isLoading" class="fa-solid fa-spinner" id="faspinner"></i>
 				<i v-else class="fa-regular fa-paper-plane"></i>
 			</button>
 		</div>
@@ -66,7 +66,7 @@ export default {
 				scrollToBottom()
 			} catch (error) {
 				console.error('Error:', error)
-				chatStore.addMessage({ role: 'assistant', content: '抱歉，發生錯誤。請稍後再試。' })
+				chatStore.addMessage({ role: 'assistant', content: '抱歉，發生錯誤。請稍後再試。', msg: "error" })
 				scrollToBottom()
 			} finally {
 				isLoading.value = false
@@ -287,6 +287,27 @@ button:disabled {
 	100% {
 		background-color: #2ba805;
 		box-shadow: 0 0 5px #2ba805;
+	}
+}
+
+#faspinner {
+	animation: spin 2s linear infinite;
+}
+
+.error {
+	background-color: #FFFFFF;
+	color: #dc3545;
+	animation-name: redflash;
+	animation-duration: 0.2s;
+}
+
+@keyframes redflash {
+	from {
+		background-color: #dc3545;
+	}
+
+	to {
+		background-color: #FFFFFF;
 	}
 }
 </style>
