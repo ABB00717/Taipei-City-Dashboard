@@ -1,6 +1,6 @@
 <template>
 	<div class="chat-container">
-		<h1>智慧城<a class="easter-egg"
+		<h1>Noob.GPT 智慧城<a class="easter-egg"
 				href="https://narutonti.com/wp-content/uploads/2013/08/naruto47-015_mini-e1376513163291.jpg">市聊天室</a>
 		</h1>
 		<div class="messages" ref="messagesContainer">
@@ -15,7 +15,7 @@
 				@keydown.enter.shift.exact="handleShiftEnter" @keydown.enter.exact="generateResponse"></textarea>
 			<button @click="handleButtonClick" :disabled="isLoading">
 				<i id="fast-spinner" v-if="isLoading" class="fa-solid fa-spinner"></i>
-				<i v-else class="fa-regular fa-paper-plane"></i>
+				<i v-else id="send-icon" class="fa-regular fa-paper-plane"></i>
 			</button>
 		</div>
 	</div>
@@ -240,6 +240,7 @@ h1 {
 	display: flex;
 	flex-direction: column;
 	overflow: visible;
+	position: relative;
 }
 
 textarea {
@@ -248,7 +249,6 @@ textarea {
 	min-height: 5vh;
 	max-height: 15vh;
 	border-radius: 4px;
-	margin-bottom: 10px;
 	resize: none;
 	animation-name: slidein;
 	animation-duration: 1s;
@@ -267,7 +267,6 @@ textarea:focus {
 }
 
 button {
-	position: absolute;
 	background-color: #28a745;
 	color: white;
 	border: none;
@@ -276,6 +275,9 @@ button {
 	cursor: pointer;
 	align-self: flex-end;
 	transition: background-color 0.3s;
+	bottom: 6px;
+	right: 1%;
+	position: absolute;
 }
 
 button:hover {
