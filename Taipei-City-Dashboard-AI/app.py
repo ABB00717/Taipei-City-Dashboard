@@ -104,10 +104,11 @@ def generate_response():
             config={"configurable": {"session_id": session_id}}
         )
         
-        promising_response = chain_check.invoke({
+        promising_response = check_with_history.invoke({
             "question": prompt,
-            "sql_response": sql_response
-        })
+            "sql_response": sql_response},
+            config={"configurable": {"session_id": session_id}}
+        )
         
         return jsonify({"response": promising_response})
     except Exception as e:
@@ -133,13 +134,19 @@ prompt_check = ChatPromptTemplate.from_messages([
 load_environment()
 app = create_app()
 main_chain = setup_ai_model()
+chain_check = prompt_check | ChatOpenAI(model="gpt-4o") | StrOutputParser()
 chain_with_history = RunnableWithMessageHistory(
     main_chain,
     getSessionHistory,
     input_messages_key="question",
     history_messages_key="history",
 )
-chain_check = prompt_check | ChatOpenAI(model="gpt-4o") | StrOutputParser()
+check_with_history = RunnableWithMessageHistory(
+    chain_check,
+	getSessionHistory,
+	input_messages_key="question",
+	history_messages_key="history",
+)
 
 # Route definitions
 app.route("/")(index)
