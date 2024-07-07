@@ -70,13 +70,7 @@ def setup_ai_model():
     return main_chain
 
 # Chat history management
-memory = {}
 conversation = {}
-
-def getSessionHistory(session_id: str) -> BaseChatMessageHistory:
-    if session_id not in memory:
-        memory[session_id] = ChatMessageHistory()
-    return memory[session_id]
 
 def getSessionConversation(session_id: str) -> BaseChatMessageHistory:
     if session_id not in conversation:
@@ -146,7 +140,7 @@ main_chain = setup_ai_model()
 chain_check = prompt_check | ChatOpenAI(model="gpt-4o") | StrOutputParser()
 chain_with_history = RunnableWithMessageHistory(
     main_chain,
-    getSessionHistory,
+    getSessionConversation,
     input_messages_key="question",
     history_messages_key="history",
 )
