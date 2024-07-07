@@ -291,6 +291,20 @@ button:disabled {
 }
 
 .error {
+	background-color: white;
 	color: #FF033E;
+	animation-name: redflash;
+	animation-duration: 0.2s
+}
+
+@keyframes redflash {
+	0% {
+		background-color: #FF033E;
+	}
+
+	100% {
+		background-color: white;
+	}
+
 }
 </style>
