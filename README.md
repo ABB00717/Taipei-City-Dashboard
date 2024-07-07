@@ -3,7 +3,7 @@ title: SITCON Hackathon 2024 專案 README 模板
 tags: SITCON Hackathon 2024, SITCON,  Hackathon , 2024 ,
 GA: 
 ---
-# {智慧城市}
+# {Noob.GPT 智慧城市助理}
 
 SITCON Hackathon 2024 成果發表範例
 
