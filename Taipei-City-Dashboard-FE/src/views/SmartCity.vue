@@ -5,7 +5,7 @@
 		</h1>
 		<div class="messages" ref="messagesContainer">
 			<div v-for="(message, index) in chatStore.state.chatHistory" :key="index"
-				:class="['message', message.role]">
+				:class="['message', message.role, message.msg]">
 				{{ message.content }}
 			</div>
 			<img class="spinningCat" v-if="isLoading" src="./loading_cat.gif">
@@ -70,7 +70,7 @@ export default {
 				scrollToBottom()
 			} catch (error) {
 				console.error('Error:', error)
-				chatStore.addMessage({ role: 'assistant', content: '抱歉，發生錯誤。請稍後再試。' })
+				chatStore.addMessage({ role: 'assistant', content: '抱歉，發生錯誤。請稍後再試。', msg: "error" })
 				scrollToBottom()
 			} finally {
 				isLoading.value = false
@@ -319,5 +319,24 @@ button:disabled {
 
 a.easter-egg:hover {
 	text-decoration: underline;
-}
-</style>
+
+	#faspinner {
+		animation: spin 2s linear infinite;
+	}
+
+	.error {
+		background-color: #FFFFFF;
+		color: #dc3545;
+		animation-name: redflash;
+		animation-duration: 0.2s;
+	}
+
+	@keyframes redflash {
+		from {
+			background-color: #dc3545;
+		}
+
+		to {
+			background-color: #FFFFFF;
+		}
+	}</style>

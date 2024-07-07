@@ -70,12 +70,12 @@ def setup_ai_model():
     return main_chain
 
 # Chat history management
-memory = {}
+conversation = {}
 
-def getSessionHistory(session_id: str) -> BaseChatMessageHistory:
-    if session_id not in memory:
-        memory[session_id] = ChatMessageHistory()
-    return memory[session_id]
+def getSessionConversation(session_id: str) -> BaseChatMessageHistory:
+    if session_id not in conversation:
+        conversation[session_id] = ChatMessageHistory()
+    return conversation[session_id]
 
 def format_chat_history(chat_history):
     formatted_history = []
@@ -104,10 +104,11 @@ def generate_response():
             config={"configurable": {"session_id": session_id}}
         )
         
-        promising_response = chain_check.invoke({
+        promising_response = check_with_history.invoke({
             "question": prompt,
-            "sql_response": sql_response
-        })
+            "sql_response": sql_response},
+            config={"configurable": {"session_id": session_id}}
+        )
         
         return jsonify({"response": promising_response})
     except Exception as e:
@@ -119,10 +120,13 @@ prompt_check = ChatPromptTemplate.from_messages([
     1. If it contains valid data:
        - Incorporate the key points into your consideration.
        - Ensure all data is accurately represented.
+       - Please also consider the chat history.
        - Answer the user's question based on the SQL data.
     2. If it contains a syntax error or any error message:
-       - Disregard the SQL response entirely.
+       - Disregard the SQL response entirely and forget anything about SQL.
        - Answer the user's question directly without mentioning any error.
+       - Don't reply with any SQL grammar or syntax.
+       - Please also consider the chat history if youo can't find it from sql_response.
        - You may use any valid data provided in the response, if any.
     3. In all cases, focus on addressing the user's question to the best of your ability.
     """),
@@ -133,13 +137,19 @@ prompt_check = ChatPromptTemplate.from_messages([
 load_environment()
 app = create_app()
 main_chain = setup_ai_model()
+chain_check = prompt_check | ChatOpenAI(model="gpt-4o") | StrOutputParser()
 chain_with_history = RunnableWithMessageHistory(
     main_chain,
-    getSessionHistory,
+    getSessionConversation,
     input_messages_key="question",
     history_messages_key="history",
 )
-chain_check = prompt_check | ChatOpenAI(model="gpt-4o") | StrOutputParser()
+check_with_history = RunnableWithMessageHistory(
+    chain_check,
+	getSessionConversation,
+	input_messages_key="question",
+	history_messages_key="history",
+)
 
 # Route definitions
 app.route("/")(index)
