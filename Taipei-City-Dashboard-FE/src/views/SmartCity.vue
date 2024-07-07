@@ -1,6 +1,8 @@
 <template>
 	<div class="chat-container">
-		<h1>智慧城市聊天室</h1>
+		<h1>智慧城<a class="easter-egg"
+				href="https://narutonti.com/wp-content/uploads/2013/08/naruto47-015_mini-e1376513163291.jpg">市聊天室</a>
+		</h1>
 		<div class="messages" ref="messagesContainer">
 			<div v-for="(message, index) in chatStore.state.chatHistory" :key="index"
 				:class="['message', message.role]">
@@ -11,7 +13,7 @@
 		<div class="input-area">
 			<textarea v-model="prompt" :disabled="isLoading" placeholder="在這裡輸入你的問題..."
 				@keydown.enter.shift.exact="handleShiftEnter" @keydown.enter.exact="generateResponse"></textarea>
-			<button @click="generateResponse" :disabled="isLoading">
+			<button @click="handleButtonClick" :disabled="isLoading">
 				<i v-if="isLoading" class="fa-solid fa-spinner"></i>
 				<i v-else class="fa-regular fa-paper-plane"></i>
 			</button>
@@ -30,6 +32,8 @@ export default {
 		const isLoading = ref(false)
 		const messagesContainer = ref(null)
 		const chatStore = useChatStore()
+		const clicks = ref(0)
+		const timer = ref(null)
 
 		const scrollToBottom = () => {
 			nextTick(() => {
@@ -74,6 +78,26 @@ export default {
 			}
 		}
 
+		const handleButtonClick = () => {
+			clicks.value += 1
+
+			if (timer.value) {
+				clearTimeout(timer.value)
+			}
+
+			timer.value = setTimeout(() => {
+				if (clicks.value > 1) {
+					console.log("TOO MUCH")
+					chatStore.addMessage({ role: 'assistant', content: "Redirecting you to https://cpstest.org/" })
+					window.location.href = 'https://cpstest.org/'
+				} else {
+					generateResponse()
+				}
+				clicks.value = 0
+				timer.value = null
+			}, 100)
+		}
+
 		const handleShiftEnter = (event) => {
 			return
 		}
@@ -84,11 +108,14 @@ export default {
 
 		return {
 			prompt,
+			clicks,
+			timer,
 			isLoading,
 			generateResponse,
 			messagesContainer,
 			chatStore,
-			handleShiftEnter
+			handleShiftEnter,
+			handleButtonClick
 		}
 	}
 }
@@ -288,5 +315,9 @@ button:disabled {
 		background-color: #2ba805;
 		box-shadow: 0 0 5px #2ba805;
 	}
+}
+
+a.easter-egg:hover {
+	text-decoration: underline;
 }
 </style>
