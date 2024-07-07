@@ -59,6 +59,8 @@ SITCON Hackathon 2024 成果發表範例
 > ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/979111e6-1bcc-4951-aae5-b7a142bca67c)<br>
 可以根據上下文回答問題。<br>
 > ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/e78f010c-fbf8-45a2-bdda-63671e547657)<br>
+可以知道一些沒有在儀表板上的資訊。<br>
+> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/76d6f23b-ee79-44b4-ad5b-daa323d21569)
 但是他依然很有可能會犯錯 (PS. 台科大在大安區)。<br>
 > ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/53ab898f-12d8-483b-97bc-d40bcc5e05b6)<br>
 > ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/5b8d66ff-8266-45d7-af97-dfd97dbac694)
