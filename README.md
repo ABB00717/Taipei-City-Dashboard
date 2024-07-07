@@ -56,6 +56,7 @@ SITCON Hackathon 2024 成果發表範例
 ### 成果展示
 - 可附上其他專案介紹的投影片/文件等等<br>
 一些你可能會有的對話，可以看到就算不在資料庫內，在他能力以內依然能回答。<br>
+> ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/33f7fce6-1196-4b4a-ac18-1d385d941ea2)<br>
 > ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/06e49af1-6bc8-4537-80ed-170cdfd480e1)<br>
 > ![image](https://github.com/ABB00717/Taipei-City-Dashboard/assets/99705287/2adf5894-f60b-40ea-a4d8-e5f1d8487e5e)<br>
 
