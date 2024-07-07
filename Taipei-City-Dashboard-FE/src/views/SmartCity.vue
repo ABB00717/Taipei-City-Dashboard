@@ -1,6 +1,6 @@
 <template>
 	<div class="chat-container">
-		<h1>智慧城<a class="easter-egg"
+		<h1>Noob.GPT智慧城<a class="easter-egg"
 				href="https://narutonti.com/wp-content/uploads/2013/08/naruto47-015_mini-e1376513163291.jpg">市聊天室</a>
 		</h1>
 		<div class="messages" ref="messagesContainer">
