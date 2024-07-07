@@ -1,90 +1,23 @@
-import os
-from dotenv import load_dotenv
+# app.py
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
+from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.chat_history import BaseChatMessageHistory
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain_community.utilities import SQLDatabase
-from langchain.chains import create_sql_query_chain
-from langchain_community.tools.sql_database.tool import QuerySQLDataBaseTool
-from operator import itemgetter
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
 
-# Environment setup
-def load_environment():
-    load_dotenv()
-    os.environ["LANGCHAIN_TRACING_V2"] = "true"
-    os.environ["LANGCHAIN_API_KEY"] = get_env_or_default("LANGCHAIN_API_KEY", "")
-    os.environ["OPENAI_API_KEY"] = get_env_or_default("OPENAI_API_KEY", "")
-    os.environ["TAVILY_API_KEY"] = get_env_or_default("TAVILY_API_KEY", "")
+from config import load_environment
+from database import get_db
+from ai_model import setup_ai_model, setup_check_chain
+from chat_history import getSessionConversation
 
-def get_env_or_default(key, default):
-    value = os.getenv(key)
-    if value is None or value.strip() == '':
-        print(f"Warning: Environment variable {key} is not set. Using default value: {default}")
-        return default
-    return value
-
-# Database setup
-def get_db():
-    db_uri = "postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}".format(
-        user=get_env_or_default('DB_DASHBOARD_USER', 'postgres'),
-        password=get_env_or_default('DB_DASHBOARD_PASSWORD', 'Abb00717717abb'),
-        host=get_env_or_default('DB_DASHBOARD_HOST', 'postgres-data'),
-        port=get_env_or_default('DB_DASHBOARD_PORT', '5432'),
-        dbname=get_env_or_default('DB_DASHBOARD_DBNAME', 'dashboard')
-    )
-    return SQLDatabase.from_uri(db_uri)
-
-# Flask app setup
 def create_app():
     app = Flask(__name__, static_folder=".")
     CORS(app)
     return app
 
-# AI model and tools setup
-def setup_ai_model():
-    model = ChatOpenAI(model="gpt-3.5-turbo")
-    db = get_db()
-    execute_query = QuerySQLDataBaseTool(db=db)
-    write_query = create_sql_query_chain(model, db)
-    
-    answer_prompt = ChatPromptTemplate.from_messages([
-        ("system", "You are an AI assistant that answers questions based on the chat history and SQL query results. Always consider the chat history when formulating your responses."),
-        ("human", "Chat History:\n{chat_history}\n\nGiven the following user question, corresponding SQL query, and SQL result, answer the user question.\n\nQuestion: {question}\nSQL Query: {query}\nSQL Result: {result}\nAnswer:"),
-    ])
-
-    main_chain = (
-        RunnablePassthrough.assign(query=write_query)
-        .assign(result=itemgetter("query") | execute_query)
-        .assign(chat_history=lambda x: format_chat_history(x["history"]))
-        | answer_prompt
-        | model
-        | StrOutputParser()
-    )
-
-    return main_chain
-
-# Chat history management
-conversation = {}
-
-def getSessionConversation(session_id: str) -> BaseChatMessageHistory:
-    if session_id not in conversation:
-        conversation[session_id] = ChatMessageHistory()
-    return conversation[session_id]
-
-def format_chat_history(chat_history):
-    formatted_history = []
-    for message in chat_history:
-        if message.type == "human":
-            formatted_history.append(f"Human: {message.content}")
-        elif message.type == "ai":
-            formatted_history.append(f"AI: {message.content}")
-    return "\n".join(formatted_history)
+# New function to get session history without modifying it
+def get_read_only_session_history(session_id: str):
+    return getSessionConversation(session_id)
 
 # Route handlers
 def index():
@@ -99,57 +32,37 @@ def generate_response():
     session_id = data.get("session_id", "default")
 
     try:
-        sql_response = chain_with_history.invoke(
-            {"question": prompt},
-            config={"configurable": {"session_id": session_id}}
-        )
+        # Use the read-only session history
+        session_history = get_read_only_session_history(session_id)
         
-        promising_response = check_with_history.invoke({
+        sql_response = main_chain.invoke({
             "question": prompt,
-            "sql_response": sql_response},
-            config={"configurable": {"session_id": session_id}}
-        )
+            "history": session_history
+        })
+        
+        promising_response = chain_check.invoke({
+            "question": prompt,
+            "sql_response": sql_response,
+            "history": session_history
+        })
+        
+        # Manually update the session history after processing
+        session_history.add_user_message(prompt)
+        session_history.add_ai_message(promising_response)
         
         return jsonify({"response": promising_response})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-prompt_check = ChatPromptTemplate.from_messages([
-    ("system", """
-    Analyze the SQL response:
-    1. If it contains valid data:
-       - Incorporate the key points into your consideration.
-       - Ensure all data is accurately represented.
-       - Please also consider the chat history.
-       - Answer the user's question based on the SQL data.
-    2. If it contains a syntax error or any error message:
-       - Disregard the SQL response entirely and forget anything about SQL.
-       - Answer the user's question directly without mentioning any error.
-       - Don't reply with any SQL grammar or syntax.
-       - Please also consider the chat history if youo can't find it from sql_response.
-       - You may use any valid data provided in the response, if any.
-    3. In all cases, focus on addressing the user's question to the best of your ability.
-    """),
-    ("human", "SQL Response:\n{sql_response}\n\nUser Question: {question}\nAnswer:")
-])
-
 # Main application setup
 load_environment()
 app = create_app()
-main_chain = setup_ai_model()
-chain_check = prompt_check | ChatOpenAI(model="gpt-4o") | StrOutputParser()
-chain_with_history = RunnableWithMessageHistory(
-    main_chain,
-    getSessionConversation,
-    input_messages_key="question",
-    history_messages_key="history",
-)
-check_with_history = RunnableWithMessageHistory(
-    chain_check,
-	getSessionConversation,
-	input_messages_key="question",
-	history_messages_key="history",
-)
+db = get_db()
+main_chain = setup_ai_model(db)
+chain_check = setup_check_chain()
+
+# Remove RunnableWithMessageHistory wrappers
+# chain_with_history and check_with_history are no longer used
 
 # Route definitions
 app.route("/")(index)
