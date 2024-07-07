@@ -319,24 +319,26 @@ button:disabled {
 
 a.easter-egg:hover {
 	text-decoration: underline;
+}
 
-	#faspinner {
-		animation: spin 2s linear infinite;
+#faspinner {
+	animation: spin 2s linear infinite;
+}
+
+.error {
+	background-color: #FFFFFF;
+	color: #dc3545;
+	animation-name: redflash;
+	animation-duration: 0.2s;
+}
+
+@keyframes redflash {
+	from {
+		background-color: #dc3545;
 	}
 
-	.error {
+	to {
 		background-color: #FFFFFF;
-		color: #dc3545;
-		animation-name: redflash;
-		animation-duration: 0.2s;
 	}
-
-	@keyframes redflash {
-		from {
-			background-color: #dc3545;
-		}
-
-		to {
-			background-color: #FFFFFF;
-		}
-	}</style>
+}
+</style>
