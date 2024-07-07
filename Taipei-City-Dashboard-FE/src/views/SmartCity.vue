@@ -12,8 +12,8 @@
 			<textarea v-model="prompt" :disabled="isLoading" placeholder="在這裡輸入你的問題..."
 				@keydown.enter.shift.exact="handleShiftEnter" @keydown.enter.exact="generateResponse"></textarea>
 			<button @click="generateResponse" :disabled="isLoading">
-				<i v-if="isLoading" class="fa-solid fa-plane-arrival"></i>
-				<i v-else class="fa-solid fa-plane-departure"></i>
+				<i v-if="isLoading" class="fa-solid fa-spinner"></i>
+				<i v-else class="fa-regular fa-paper-plane"></i>
 			</button>
 		</div>
 	</div>
